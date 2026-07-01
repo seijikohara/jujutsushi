@@ -10,12 +10,5 @@
   "insertFinalNewline": true,
   "arrowParens": "always",
   "bracketSpacing": true,
-  "ignorePatterns": [
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/ios/**",
-    "**/android/**",
-    "**/macos/Pods/**",
-    "apps/macos/README.md"
-  ]
+  "ignorePatterns": ["**/dist/**", "**/ios/**", "**/android/**", "**/macos/Pods/**"]
 }

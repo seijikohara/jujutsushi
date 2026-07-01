@@ -14,8 +14,9 @@ jobs:
       - name: Install jj
         run: |
           curl -LsSf -o jj.tar.gz https://github.com/jj-vcs/jj/releases/download/v0.42.0/jj-v0.42.0-x86_64-unknown-linux-musl.tar.gz
-          tar xzf jj.tar.gz
-          sudo mv jj /usr/local/bin/jj
+          mkdir -p /tmp/jj-install
+          tar xzf jj.tar.gz -C /tmp/jj-install
+          sudo mv /tmp/jj-install/jj /usr/local/bin/jj
           jj --version
 
       - uses: pnpm/action-setup@v6
@@ -27,16 +28,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - name: Debug README.md discovery
-        run: |
-          echo "--- tracked README.md files ---"
-          git ls-files | grep -i readme || true
-          echo "--- all README.md on disk (excluding node_modules) ---"
-          find . -iname 'readme.md' -not -path '*/node_modules/*' || true
-          echo "--- all README.md on disk (including node_modules) ---"
-          find . -iname 'readme.md' || true
-          echo "--- oxfmt --list-different -v equivalent ---"
-          pnpm exec oxfmt --check apps/macos/README.md || true
       - run: pnpm format:check
       - run: pnpm --filter @jujutsushi/core run typecheck
       - run: pnpm --filter @jujutsushi/core run build
