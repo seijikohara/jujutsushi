@@ -64,4 +64,4 @@ jobs:
 
       - name: Build apps/macos
         working-directory: apps/macos
-        run: npx react-native build-macos
+        run: npx react-native build-macos --mode Release
