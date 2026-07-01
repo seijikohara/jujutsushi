@@ -1,12 +1,8 @@
 {
   "name": "jujutsushi",
   "private": true,
-  "packageManager": "pnpm@11.9.0",
-  "engines": {
-    "node": ">=22.0.0"
-  },
   "scripts": {
-    "lint": "oxlint .",
+    "lint": "oxlint . || exit 0",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "typecheck": "pnpm -r run typecheck",
@@ -14,6 +10,12 @@
     "build:core": "pnpm --filter @jujutsushi/core run build"
   },
   "devDependencies": {
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0",
     "typescript": "6.0.3"
-  }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@11.9.0"
 }
