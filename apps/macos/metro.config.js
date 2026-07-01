@@ -21,7 +21,10 @@ const workspaceRoot = path.resolve(projectRoot, '../..');
 const config = {
   watchFolders: [workspaceRoot],
   resolver: {
-    nodeModulesPaths: [path.resolve(projectRoot, 'node_modules'), path.resolve(workspaceRoot, 'node_modules')],
+    nodeModulesPaths: [
+      path.resolve(projectRoot, 'node_modules'),
+      path.resolve(workspaceRoot, 'node_modules'),
+    ],
   },
 };
 
