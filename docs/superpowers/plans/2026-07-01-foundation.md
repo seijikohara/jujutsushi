@@ -76,6 +76,7 @@ jujutsushi/
 ### Task 1: Initialize the pnpm workspace root
 
 **Files:**
+
 - Create: `package.json`
 - Create: `pnpm-workspace.yaml`
 - Create: `.npmrc`
@@ -83,14 +84,15 @@ jujutsushi/
 - Create: `tsconfig.base.json`
 
 **Interfaces:**
+
 - Produces: the `apps/*` / `packages/*` workspace glob every later task's package lives under; the `tsconfig.base.json` that `packages/core/tsconfig.json` extends.
 
 - [ ] **Step 1: Create `pnpm-workspace.yaml`**
 
 ```yaml
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 
 allowBuilds:
   lefthook: true
@@ -183,11 +185,13 @@ git commit -m "chore: initialize pnpm workspace root"
 ### Task 2: Configure oxlint and oxfmt at the workspace root
 
 **Files:**
+
 - Create: `.oxlintrc.json`
 - Create: `.oxfmtrc.json`
 - Modify: `package.json:8-16` (devDependencies)
 
 **Interfaces:**
+
 - Produces: `pnpm lint` / `pnpm format` / `pnpm format:check`, runnable from anywhere in the tree once later tasks add files for them to check.
 
 - [ ] **Step 1: Create `.oxlintrc.json`**
@@ -279,10 +283,12 @@ git commit -m "chore: configure oxlint and oxfmt at the workspace root"
 ### Task 3: Configure Lefthook
 
 **Files:**
+
 - Create: `lefthook.yml`
 - Modify: `package.json` (devDependencies)
 
 **Interfaces:**
+
 - Produces: a `pre-commit` git hook that runs `oxlint --fix` then `oxfmt` on staged files, scoped separately per package so a `packages/core`-only commit never touches `apps/macos` files (and vice versa).
 
 - [ ] **Step 1: Add lefthook as a root devDependency**
@@ -304,16 +310,17 @@ Expected: installs cleanly. Lefthook's `postinstall` script runs automatically (
 - [ ] **Step 2: Create `lefthook.yml`**
 
 ```yaml
-glob_matcher: doublestar # `**` matches 0+ directories. The default matcher requires `**` to
-                          # cross at least 1 directory, which would silently skip a file sitting
-                          # directly at e.g. packages/core/index.ts.
+glob_matcher:
+  doublestar # `**` matches 0+ directories. The default matcher requires `**` to
+  # cross at least 1 directory, which would silently skip a file sitting
+  # directly at e.g. packages/core/index.ts.
 
 pre-commit:
   parallel: true # the two package groups touch disjoint files — safe to run concurrently
   jobs:
     - name: core
-      root: "packages/core/"
-      glob: "packages/core/**/*.{ts,tsx}"
+      root: 'packages/core/'
+      glob: 'packages/core/**/*.{ts,tsx}'
       group:
         piped: true # oxlint, then oxfmt; stop if oxlint still fails after --fix
         jobs:
@@ -325,8 +332,8 @@ pre-commit:
             stage_fixed: true
 
     - name: macos
-      root: "apps/macos/"
-      glob: "apps/macos/**/*.{ts,tsx}"
+      root: 'apps/macos/'
+      glob: 'apps/macos/**/*.{ts,tsx}'
       group:
         piped: true
         jobs:
@@ -357,6 +364,7 @@ git commit -m "chore: configure Lefthook for pre-commit lint and format"
 ### Task 4: Scaffold the `packages/core` package
 
 **Files:**
+
 - Create: `packages/core/package.json`
 - Create: `packages/core/tsconfig.json`
 - Create: `packages/core/jest.config.ts`
@@ -364,6 +372,7 @@ git commit -m "chore: configure Lefthook for pre-commit lint and format"
 - Create: `jest.config.ts` (workspace root)
 
 **Interfaces:**
+
 - Produces: `@jujutsushi/core` as an installable workspace package with working `test`/`typecheck`/`build` scripts, ready for Task 5 onward to add real source files into.
 
 - [ ] **Step 1: Create `packages/core/package.json`**
@@ -409,8 +418,8 @@ Test files are excluded from the `build` output — `dist/` (what `apps/macos` w
 - [ ] **Step 3: Create `packages/core/jest.config.ts`**
 
 ```ts
-import type {JestConfigWithTsJest} from 'ts-jest';
-import {createDefaultPreset} from 'ts-jest';
+import type { JestConfigWithTsJest } from 'ts-jest';
+import { createDefaultPreset } from 'ts-jest';
 
 export default {
   displayName: 'core',
@@ -434,7 +443,7 @@ export default {
 - [ ] **Step 5: Create the workspace-root `jest.config.ts`**
 
 ```ts
-import {defineConfig} from 'jest';
+import { defineConfig } from 'jest';
 
 export default defineConfig({
   projects: ['<rootDir>/packages/core'],
@@ -479,10 +488,12 @@ git commit -m "chore: scaffold the @jujutsushi/core package"
 ### Task 5: Implement jj version parsing and comparison
 
 **Files:**
+
 - Create: `packages/core/src/version.ts`
 - Test: `packages/core/src/version.test.ts`
 
 **Interfaces:**
+
 - Produces: `JjVersion` (`{major, minor, patch, raw}`), `parseJjVersion(output: string): JjVersion`, `isVersionAtLeast(version: JjVersion, minimum: JjVersion): boolean`, `MINIMUM_SUPPORTED_JJ_VERSION: JjVersion` — used by Task 7 (`getVersion`) and Task 6 (`JjVersionTooOldError`).
 
 - [ ] **Step 1: Write the failing tests**
@@ -490,7 +501,7 @@ git commit -m "chore: scaffold the @jujutsushi/core package"
 `packages/core/src/version.test.ts`:
 
 ```typescript
-import {parseJjVersion, isVersionAtLeast, MINIMUM_SUPPORTED_JJ_VERSION} from './version';
+import { parseJjVersion, isVersionAtLeast, MINIMUM_SUPPORTED_JJ_VERSION } from './version';
 
 describe('parseJjVersion', () => {
   it('parses real `jj --version` output', () => {
@@ -510,25 +521,25 @@ describe('parseJjVersion', () => {
 });
 
 describe('isVersionAtLeast', () => {
-  const minimum = {major: 0, minor: 42, patch: 0, raw: '0.42.0'};
+  const minimum = { major: 0, minor: 42, patch: 0, raw: '0.42.0' };
 
   it('returns true when the major version is newer', () => {
-    expect(isVersionAtLeast({major: 1, minor: 0, patch: 0, raw: '1.0.0'}, minimum)).toBe(true);
+    expect(isVersionAtLeast({ major: 1, minor: 0, patch: 0, raw: '1.0.0' }, minimum)).toBe(true);
   });
 
   it('returns true when exactly equal to the minimum', () => {
-    expect(isVersionAtLeast({major: 0, minor: 42, patch: 0, raw: '0.42.0'}, minimum)).toBe(true);
+    expect(isVersionAtLeast({ major: 0, minor: 42, patch: 0, raw: '0.42.0' }, minimum)).toBe(true);
   });
 
   it('returns false when the minor version is older', () => {
-    expect(isVersionAtLeast({major: 0, minor: 41, patch: 9, raw: '0.41.9'}, minimum)).toBe(false);
+    expect(isVersionAtLeast({ major: 0, minor: 41, patch: 9, raw: '0.41.9' }, minimum)).toBe(false);
   });
 
   it('returns false when only the patch version is older', () => {
     expect(
       isVersionAtLeast(
-        {major: 0, minor: 42, patch: 0, raw: '0.42.0'},
-        {major: 0, minor: 42, patch: 1, raw: '0.42.1'},
+        { major: 0, minor: 42, patch: 0, raw: '0.42.0' },
+        { major: 0, minor: 42, patch: 1, raw: '0.42.1' },
       ),
     ).toBe(false);
   });
@@ -536,7 +547,7 @@ describe('isVersionAtLeast', () => {
 
 describe('MINIMUM_SUPPORTED_JJ_VERSION', () => {
   it('is 0.42.0', () => {
-    expect(MINIMUM_SUPPORTED_JJ_VERSION).toEqual({major: 0, minor: 42, patch: 0, raw: '0.42.0'});
+    expect(MINIMUM_SUPPORTED_JJ_VERSION).toEqual({ major: 0, minor: 42, patch: 0, raw: '0.42.0' });
   });
 });
 ```
@@ -607,11 +618,13 @@ git commit -m "feat: add jj version parsing and comparison"
 ### Task 6: Implement the ProcessRunner abstraction and typed errors
 
 **Files:**
+
 - Create: `packages/core/src/ProcessRunner.ts`
 - Create: `packages/core/src/errors.ts`
 - Test: `packages/core/src/errors.test.ts`
 
 **Interfaces:**
+
 - Consumes: `JjVersion`, `MINIMUM_SUPPORTED_JJ_VERSION` from `./version` (Task 5).
 - Produces: `ProcessResult` (`{stdout, stderr}`), `ProcessRunner` interface (`run(command, args, cwd?): Promise<ProcessResult>`), `ProcessLaunchError`, `ProcessExitError` — the seam Task 7/8's `SubprocessJjClient` depends on, and that both `NodeProcessRunner` (Task 8's test helper) and `apps/macos`'s `NativeProcessRunner` (Task 12) implement. Also produces `JjBinaryNotFoundError`, `JjNotARepositoryError`, `JjVersionTooOldError` — used by Task 7/8.
 
@@ -622,7 +635,7 @@ Why this seam exists: React Native's JS runtime (Hermes) has no Node built-ins �
 `packages/core/src/errors.test.ts`:
 
 ```typescript
-import {JjBinaryNotFoundError, JjNotARepositoryError, JjVersionTooOldError} from './errors';
+import { JjBinaryNotFoundError, JjNotARepositoryError, JjVersionTooOldError } from './errors';
 
 describe('JjBinaryNotFoundError', () => {
   it('has a clear message', () => {
@@ -640,8 +653,8 @@ describe('JjNotARepositoryError', () => {
 
 describe('JjVersionTooOldError', () => {
   it('includes both the found and minimum versions', () => {
-    const found = {major: 0, minor: 40, patch: 0, raw: '0.40.0'};
-    const minimum = {major: 0, minor: 42, patch: 0, raw: '0.42.0'};
+    const found = { major: 0, minor: 40, patch: 0, raw: '0.40.0' };
+    const minimum = { major: 0, minor: 42, patch: 0, raw: '0.42.0' };
     const error = new JjVersionTooOldError(found, minimum);
     expect(error.message).toBe('jj 0.40.0 is older than the minimum supported version 0.42.0');
     expect(error.found).toBe(found);
@@ -701,7 +714,7 @@ export interface ProcessRunner {
 - [ ] **Step 4: Create `packages/core/src/errors.ts`**
 
 ```typescript
-import type {JjVersion} from './version';
+import type { JjVersion } from './version';
 
 export class JjBinaryNotFoundError extends Error {
   constructor() {
@@ -745,11 +758,13 @@ git commit -m "feat: add ProcessRunner abstraction and typed jj errors"
 ### Task 7: Implement `SubprocessJjClient.getVersion`
 
 **Files:**
+
 - Create: `packages/core/src/JjClient.ts`
 - Create: `packages/core/src/testing/NodeProcessRunner.ts`
 - Test: `packages/core/src/JjClient.test.ts`
 
 **Interfaces:**
+
 - Consumes: `ProcessRunner`, `ProcessResult`, `ProcessLaunchError`, `ProcessExitError` from `./ProcessRunner` (Task 6); `JjBinaryNotFoundError` from `./errors` (Task 6); `parseJjVersion`, `JjVersion` from `./version` (Task 5).
 - Produces: `JjClient` interface, `SubprocessJjClient` class with `getVersion(): Promise<JjVersion>` (this task) and `getStatus(repoPath: string): Promise<JjWorkingCopyStatus>` (Task 8, same file). `NodeProcessRunner` — Jest-only, imported by test files via relative path (`./testing/NodeProcessRunner`), **not** re-exported from `index.ts`.
 
@@ -758,10 +773,10 @@ git commit -m "feat: add ProcessRunner abstraction and typed jj errors"
 `packages/core/src/testing/NodeProcessRunner.ts`:
 
 ```typescript
-import {execFile as execFileCallback} from 'node:child_process';
-import {promisify} from 'node:util';
-import type {ProcessRunner, ProcessResult} from '../ProcessRunner';
-import {ProcessLaunchError, ProcessExitError} from '../ProcessRunner';
+import { execFile as execFileCallback } from 'node:child_process';
+import { promisify } from 'node:util';
+import type { ProcessRunner, ProcessResult } from '../ProcessRunner';
+import { ProcessLaunchError, ProcessExitError } from '../ProcessRunner';
 
 const execFile = promisify(execFileCallback);
 
@@ -785,7 +800,7 @@ function isExecFileError(error: unknown): error is ExecFileError {
 export class NodeProcessRunner implements ProcessRunner {
   async run(command: string, args: readonly string[], cwd?: string): Promise<ProcessResult> {
     try {
-      return await execFile(command, args as string[], {cwd});
+      return await execFile(command, args as string[], { cwd });
     } catch (error) {
       if (isExecFileError(error) && error.code === 'ENOENT') {
         throw new ProcessLaunchError('not-found', `${command} not found on PATH`);
@@ -805,8 +820,8 @@ export class NodeProcessRunner implements ProcessRunner {
 `packages/core/src/JjClient.test.ts`:
 
 ```typescript
-import {SubprocessJjClient} from './JjClient';
-import {NodeProcessRunner} from './testing/NodeProcessRunner';
+import { SubprocessJjClient } from './JjClient';
+import { NodeProcessRunner } from './testing/NodeProcessRunner';
 
 describe('SubprocessJjClient', () => {
   let client: SubprocessJjClient;
@@ -833,11 +848,11 @@ Expected: FAIL — `Cannot find module './JjClient'`.
 - [ ] **Step 4: Implement `packages/core/src/JjClient.ts` (getVersion only for now)**
 
 ```typescript
-import type {ProcessRunner, ProcessResult} from './ProcessRunner';
-import {ProcessLaunchError} from './ProcessRunner';
-import type {JjVersion} from './version';
-import {parseJjVersion} from './version';
-import {JjBinaryNotFoundError} from './errors';
+import type { ProcessRunner, ProcessResult } from './ProcessRunner';
+import { ProcessLaunchError } from './ProcessRunner';
+import type { JjVersion } from './version';
+import { parseJjVersion } from './version';
+import { JjBinaryNotFoundError } from './errors';
 
 export interface JjClient {
   getVersion(): Promise<JjVersion>;
@@ -847,7 +862,7 @@ export class SubprocessJjClient implements JjClient {
   constructor(private readonly processRunner: ProcessRunner) {}
 
   async getVersion(): Promise<JjVersion> {
-    const {stdout} = await this.run(['--version']);
+    const { stdout } = await this.run(['--version']);
     return parseJjVersion(stdout);
   }
 
@@ -881,15 +896,18 @@ git commit -m "feat: add SubprocessJjClient.getVersion"
 ### Task 8: Implement `SubprocessJjClient.getStatus`
 
 **Files:**
+
 - Modify: `packages/core/src/JjClient.ts`
 - Modify: `packages/core/src/JjClient.test.ts`
 - Modify: `packages/core/src/index.ts`
 
 **Interfaces:**
+
 - Consumes: `JjNotARepositoryError` from `./errors` (Task 6).
 - Produces: `JjWorkingCopyStatus` (`{commitId, changeId, description, parents}`), `JjClient.getStatus(repoPath: string): Promise<JjWorkingCopyStatus>`. Finalizes `index.ts`'s public exports — this is what Task 12's `apps/macos` code imports from `@jujutsushi/core`.
 
 `jj status` itself does **not** accept `-T`/`--template` (confirmed directly: `jj status -T '...'` errors with `unexpected argument '-T' found`, unlike `log`/`diff`/`show`). `getStatus` instead reports on the working-copy commit via `jj log -T 'json(self)' --no-graph -r '@'`, which does support templating and was confirmed against a real scratch repository to produce output like:
+
 ```json
 {"commit_id":"15454dc7005e2831592268fabcffdf2a6621d2bf","parents":["0000000000000000000000000000000000000000"],"change_id":"vqrskqpmykvnpmtrzpwnoyyruxltxqll","description":"","author":{...},"committer":{...}}
 ```
@@ -899,45 +917,45 @@ git commit -m "feat: add SubprocessJjClient.getVersion"
 Add to `packages/core/src/JjClient.test.ts` (keep the existing `getVersion` describe block above this):
 
 ```typescript
-import {mkdtemp, rm} from 'node:fs/promises';
-import {tmpdir} from 'node:os';
-import {join} from 'node:path';
-import {JjNotARepositoryError} from './errors';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { JjNotARepositoryError } from './errors';
 ```
 
 (add these imports to the top of the file, alongside the existing ones)
 
 ```typescript
-  describe('getStatus', () => {
-    let repoPath: string;
+describe('getStatus', () => {
+  let repoPath: string;
 
-    beforeEach(async () => {
-      repoPath = await mkdtemp(join(tmpdir(), 'jujutsushi-jjclient-test-'));
-      const runner = new NodeProcessRunner();
-      await runner.run('jj', ['git', 'init', '--quiet'], repoPath);
-    });
-
-    afterEach(async () => {
-      await rm(repoPath, {recursive: true, force: true});
-    });
-
-    it('returns the working-copy commit for a fresh repository', async () => {
-      const status = await client.getStatus(repoPath);
-      expect(status.description).toBe('');
-      expect(status.parents).toEqual(['0000000000000000000000000000000000000000']);
-      expect(status.commitId).toMatch(/^[0-9a-f]{40}$/);
-      expect(status.changeId).toMatch(/^[a-z]{32}$/);
-    });
-
-    it('throws JjNotARepositoryError for a non-repository path', async () => {
-      const nonRepoPath = await mkdtemp(join(tmpdir(), 'jujutsushi-not-a-repo-'));
-      try {
-        await expect(client.getStatus(nonRepoPath)).rejects.toThrow(JjNotARepositoryError);
-      } finally {
-        await rm(nonRepoPath, {recursive: true, force: true});
-      }
-    });
+  beforeEach(async () => {
+    repoPath = await mkdtemp(join(tmpdir(), 'jujutsushi-jjclient-test-'));
+    const runner = new NodeProcessRunner();
+    await runner.run('jj', ['git', 'init', '--quiet'], repoPath);
   });
+
+  afterEach(async () => {
+    await rm(repoPath, { recursive: true, force: true });
+  });
+
+  it('returns the working-copy commit for a fresh repository', async () => {
+    const status = await client.getStatus(repoPath);
+    expect(status.description).toBe('');
+    expect(status.parents).toEqual(['0000000000000000000000000000000000000000']);
+    expect(status.commitId).toMatch(/^[0-9a-f]{40}$/);
+    expect(status.changeId).toMatch(/^[a-z]{32}$/);
+  });
+
+  it('throws JjNotARepositoryError for a non-repository path', async () => {
+    const nonRepoPath = await mkdtemp(join(tmpdir(), 'jujutsushi-not-a-repo-'));
+    try {
+      await expect(client.getStatus(nonRepoPath)).rejects.toThrow(JjNotARepositoryError);
+    } finally {
+      await rm(nonRepoPath, { recursive: true, force: true });
+    }
+  });
+});
 ```
 
 (this nests inside the existing `describe('SubprocessJjClient', ...)` block, as a sibling to `describe('getVersion', ...)`)
@@ -952,11 +970,11 @@ Expected: FAIL — `client.getStatus is not a function`.
 Update `packages/core/src/JjClient.ts` to:
 
 ```typescript
-import type {ProcessRunner, ProcessResult} from './ProcessRunner';
-import {ProcessLaunchError, ProcessExitError} from './ProcessRunner';
-import type {JjVersion} from './version';
-import {parseJjVersion} from './version';
-import {JjBinaryNotFoundError, JjNotARepositoryError} from './errors';
+import type { ProcessRunner, ProcessResult } from './ProcessRunner';
+import { ProcessLaunchError, ProcessExitError } from './ProcessRunner';
+import type { JjVersion } from './version';
+import { parseJjVersion } from './version';
+import { JjBinaryNotFoundError, JjNotARepositoryError } from './errors';
 
 export interface JjWorkingCopyStatus {
   readonly commitId: string;
@@ -981,12 +999,12 @@ export class SubprocessJjClient implements JjClient {
   constructor(private readonly processRunner: ProcessRunner) {}
 
   async getVersion(): Promise<JjVersion> {
-    const {stdout} = await this.run(['--version']);
+    const { stdout } = await this.run(['--version']);
     return parseJjVersion(stdout);
   }
 
   async getStatus(repoPath: string): Promise<JjWorkingCopyStatus> {
-    const {stdout} = await this.run(
+    const { stdout } = await this.run(
       ['log', '-T', 'json(self)', '--no-graph', '-r', '@'],
       repoPath,
     );
@@ -1029,16 +1047,16 @@ Expected: PASS, 3 tests.
 `packages/core/src/index.ts`:
 
 ```typescript
-export type {ProcessRunner, ProcessResult} from './ProcessRunner';
-export {ProcessLaunchError, ProcessExitError} from './ProcessRunner';
+export type { ProcessRunner, ProcessResult } from './ProcessRunner';
+export { ProcessLaunchError, ProcessExitError } from './ProcessRunner';
 
-export type {JjVersion} from './version';
-export {parseJjVersion, isVersionAtLeast, MINIMUM_SUPPORTED_JJ_VERSION} from './version';
+export type { JjVersion } from './version';
+export { parseJjVersion, isVersionAtLeast, MINIMUM_SUPPORTED_JJ_VERSION } from './version';
 
-export {JjBinaryNotFoundError, JjNotARepositoryError, JjVersionTooOldError} from './errors';
+export { JjBinaryNotFoundError, JjNotARepositoryError, JjVersionTooOldError } from './errors';
 
-export type {JjClient, JjWorkingCopyStatus} from './JjClient';
-export {SubprocessJjClient} from './JjClient';
+export type { JjClient, JjWorkingCopyStatus } from './JjClient';
+export { SubprocessJjClient } from './JjClient';
 ```
 
 This removes the `CORE_PACKAGE_NAME` placeholder constant from Task 4 — it has no more reason to exist now that there are real exports.
@@ -1066,9 +1084,11 @@ git commit -m "feat: add SubprocessJjClient.getStatus"
 ### Task 9: Scaffold the `apps/macos` base project
 
 **Files:**
+
 - Create: `apps/macos/` (generated — package.json, App.tsx, macos/, ios/, android/, and supporting config)
 
 **Interfaces:**
+
 - Produces: a buildable, launchable empty react-native-macos app at `apps/macos`, registered as a pnpm workspace member.
 
 - [ ] **Step 1: Scaffold the base project into `apps/macos`**
@@ -1167,6 +1187,7 @@ git commit -m "feat: scaffold the apps/macos react-native-macos shell"
 ### Task 10: Configure the macOS deployment target and clean up unused platforms
 
 **Files:**
+
 - Modify: `apps/macos/macos/Podfile`
 - Modify: `apps/macos/macos/Jujutsushi-macOS.xcodeproj/project.pbxproj`
 - Delete: `apps/macos/ios/`
@@ -1177,6 +1198,7 @@ git commit -m "feat: scaffold the apps/macos react-native-macos shell"
 - Modify: `jest.config.ts` (workspace root)
 
 **Interfaces:**
+
 - Produces: an `apps/macos` scoped to macOS only, targeting macOS 15.0+, with its own working lint/format/test configuration, registered in the root Jest `projects` array.
 
 - [ ] **Step 1: Set the deployment target in the Podfile**
@@ -1242,9 +1264,7 @@ Expected: exits 0 — the macOS build still succeeds with `ios/`/`android/` gone
   "plugins": ["eslint", "typescript", "unicorn", "oxc", "react"],
   "settings": { "react": { "version": "19.1.0" } },
   "globals": { "__DEV__": "readonly" },
-  "jsPlugins": [
-    { "name": "react-native", "specifier": "oxlint-plugin-react-native" }
-  ],
+  "jsPlugins": [{ "name": "react-native", "specifier": "oxlint-plugin-react-native" }],
   "rules": {
     "react/jsx-key": "error",
     "react/no-array-index-key": "warn",
@@ -1298,7 +1318,7 @@ If it's missing or different, set it to exactly the above — this preset is wha
 Update `jest.config.ts` (workspace root, created in Task 4):
 
 ```ts
-import {defineConfig} from 'jest';
+import { defineConfig } from 'jest';
 
 export default defineConfig({
   projects: ['<rootDir>/packages/core', '<rootDir>/apps/macos'],
@@ -1362,6 +1382,7 @@ git commit -m "chore: configure macOS deployment target, drop unused platforms"
 ### Task 11: Add the native process-execution bridge
 
 **Files:**
+
 - Create: `apps/macos/macos/Jujutsushi-macOS/Jujutsushi-macOS-Bridging-Header.h`
 - Create: `apps/macos/macos/Jujutsushi-macOS/NativeModules/JjProcessExecutor/JjProcessExecutor.swift`
 - Create: `apps/macos/macos/Jujutsushi-macOS/NativeModules/JjProcessExecutor/JjProcessExecutorBridge.m`
@@ -1369,6 +1390,7 @@ git commit -m "chore: configure macOS deployment target, drop unused platforms"
 - Modify: `apps/macos/macos/Jujutsushi-macOS/Jujutsushi.entitlements`
 
 **Interfaces:**
+
 - Produces: a `JjProcessExecutor` native module exposed to JS as `NativeModules.JjProcessExecutor.execute(command, args, cwd): Promise<{stdout, stderr, exitCode}>` — what Task 12's `NativeProcessRunner` calls.
 
 No Jest coverage is possible for this task (Hermes/Jest can't load an actual compiled native module) — per the spec's own testing strategy, `apps/macos` is verified by build success plus manual confirmation, not automated tests. Each step below states what to run and what a human (or an agent with an attached display) should observe.
@@ -1717,11 +1739,13 @@ git commit -m "feat: add native JjProcessExecutor subprocess bridge"
 ### Task 12: Wire packages/core into the app and build the proof-of-life screen
 
 **Files:**
+
 - Create: `apps/macos/src/NativeProcessRunner.ts`
 - Modify: `apps/macos/App.tsx`
 - Modify: `apps/macos/package.json` (add `@jujutsushi/core` dependency)
 
 **Interfaces:**
+
 - Consumes: `ProcessRunner`, `ProcessResult`, `ProcessLaunchError`, `ProcessExitError`, `SubprocessJjClient`, `JjVersionTooOldError`, `isVersionAtLeast`, `MINIMUM_SUPPORTED_JJ_VERSION` from `@jujutsushi/core` (Tasks 6-8); the native `JjProcessExecutor` module from Task 11.
 - Produces: the Foundation sub-project's actual deliverable — a running app that calls the real `jj` binary through the full stack (JS → native bridge → `Process` → `jj`) and displays the result.
 
@@ -1750,23 +1774,23 @@ Expected: exits 0. This is required before the app can bundle `@jujutsushi/core`
 `apps/macos/src/NativeProcessRunner.ts`:
 
 ```typescript
-import {NativeModules} from 'react-native';
-import type {ProcessRunner, ProcessResult} from '@jujutsushi/core';
-import {ProcessExitError, ProcessLaunchError} from '@jujutsushi/core';
+import { NativeModules } from 'react-native';
+import type { ProcessRunner, ProcessResult } from '@jujutsushi/core';
+import { ProcessExitError, ProcessLaunchError } from '@jujutsushi/core';
 
 interface JjProcessExecutorModule {
   execute(
     command: string,
     args: string[],
     cwd: string | null,
-  ): Promise<{stdout: string; stderr: string; exitCode: number}>;
+  ): Promise<{ stdout: string; stderr: string; exitCode: number }>;
 }
 
 interface NativeExecuteError extends Error {
   code?: string;
 }
 
-const {JjProcessExecutor} = NativeModules as {
+const { JjProcessExecutor } = NativeModules as {
   JjProcessExecutor: JjProcessExecutorModule;
 };
 
@@ -1778,7 +1802,7 @@ const {JjProcessExecutor} = NativeModules as {
  */
 export class NativeProcessRunner implements ProcessRunner {
   async run(command: string, args: readonly string[], cwd?: string): Promise<ProcessResult> {
-    let result: {stdout: string; stderr: string; exitCode: number};
+    let result: { stdout: string; stderr: string; exitCode: number };
     try {
       result = await JjProcessExecutor.execute(command, [...args], cwd ?? null);
     } catch (error) {
@@ -1792,7 +1816,7 @@ export class NativeProcessRunner implements ProcessRunner {
     if (result.exitCode !== 0) {
       throw new ProcessExitError(result.exitCode, result.stdout, result.stderr);
     }
-    return {stdout: result.stdout, stderr: result.stderr};
+    return { stdout: result.stdout, stderr: result.stderr };
   }
 }
 ```
@@ -1804,15 +1828,15 @@ export class NativeProcessRunner implements ProcessRunner {
 Replace `apps/macos/App.tsx` with:
 
 ```tsx
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text, useColorScheme} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, useColorScheme } from 'react-native';
 import {
   SubprocessJjClient,
   JjVersionTooOldError,
   isVersionAtLeast,
   MINIMUM_SUPPORTED_JJ_VERSION,
 } from '@jujutsushi/core';
-import {NativeProcessRunner} from './src/NativeProcessRunner';
+import { NativeProcessRunner } from './src/NativeProcessRunner';
 
 // Hardcoded to this project's own repository for now -- Foundation's scope
 // is proving the integration works end-to-end, not building a repo picker
@@ -1829,7 +1853,7 @@ async function loadStatus(): Promise<string> {
   }
 
   const status = await client.getStatus(REPO_PATH);
-  return JSON.stringify({jjVersion: version.raw, status}, null, 2);
+  return JSON.stringify({ jjVersion: version.raw, status }, null, 2);
 }
 
 function App(): React.JSX.Element {
@@ -1839,7 +1863,9 @@ function App(): React.JSX.Element {
   useEffect(() => {
     loadStatus()
       .then(setOutput)
-      .catch((error) => setOutput(`Error: ${error instanceof Error ? error.message : String(error)}`));
+      .catch((error) =>
+        setOutput(`Error: ${error instanceof Error ? error.message : String(error)}`),
+      );
   }, []);
 
   return (
@@ -1855,10 +1881,10 @@ function App(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  lightContainer: {flex: 1, backgroundColor: '#FFFFFF'},
-  darkContainer: {flex: 1, backgroundColor: '#000000'},
-  lightText: {color: '#000000', padding: 16, fontFamily: 'Menlo'},
-  darkText: {color: '#FFFFFF', padding: 16, fontFamily: 'Menlo'},
+  lightContainer: { flex: 1, backgroundColor: '#FFFFFF' },
+  darkContainer: { flex: 1, backgroundColor: '#000000' },
+  lightText: { color: '#000000', padding: 16, fontFamily: 'Menlo' },
+  darkText: { color: '#FFFFFF', padding: 16, fontFamily: 'Menlo' },
 });
 
 export default App;
@@ -1871,6 +1897,7 @@ Expected: exits 0.
 
 Run: `cd apps/macos && npx react-native run-macos && cd ../..`
 Expected: the app launches. Manually confirm on screen:
+
 - The window shows "Jujutsushi — Foundation proof of life".
 - Below it, real JSON — `jjVersion` reading `"jj 0.42.0"` (or newer) and a `status` object with `commitId`/`changeId`/`description`/`parents` fields.
 - Cross-check: run `jj log -T 'json(self)' --no-graph -r '@'` in a terminal at the repo root and confirm the `commit_id`/`change_id` in the app match (both are reading the same real, colocated repository).
@@ -1890,9 +1917,11 @@ git commit -m "feat: wire JjClient into the app and add the proof-of-life screen
 ### Task 13: Set up GitHub Actions CI
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml`
 
 **Interfaces:**
+
 - Produces: two independent CI jobs — `lint-and-test` (fast, `ubuntu-latest`, lints everything and runs `packages/core`'s tests) and `macos-build` (`macos-26`, builds `apps/macos`).
 
 `packages/core`'s tests need a real `jj` binary on the runner (per Task 8's testing strategy — no mocking). The exact Linux release asset and its internal layout were verified directly against the GitHub API and the actual downloaded tarball during this plan's research, not assumed from a general pattern.
@@ -1983,10 +2012,12 @@ git commit -m "ci: add lint/test and macOS build workflows"
 ### Task 14: Write CLAUDE.md and AGENTS.md
 
 **Files:**
+
 - Create: `AGENTS.md`
 - Create: `CLAUDE.md`
 
 **Interfaces:**
+
 - Produces: the project-orientation documents required by Foundation's Definition of Done.
 
 - [ ] **Step 1: Create `AGENTS.md`** (canonical, tool-agnostic content)
