@@ -11,8 +11,13 @@ interface ExecFileError extends Error {
   stderr?: string;
 }
 
+// Structural check rather than `instanceof Error`: under Jest's sandboxed
+// `testEnvironment: 'node'` VM, errors constructed inside Node's
+// child_process binding come from a different realm, so `instanceof Error`
+// unreliably returns false even for genuine Error instances. `code` is set
+// on both error shapes execFile can reject with (ENOENT and non-zero exit).
 function isExecFileError(error: unknown): error is ExecFileError {
-  return error instanceof Error;
+  return typeof error === 'object' && error !== null && 'code' in error;
 }
 
 /**

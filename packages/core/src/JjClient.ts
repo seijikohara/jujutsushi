@@ -59,16 +59,6 @@ export class SubprocessJjClient implements JjClient {
       ) {
         throw new JjNotARepositoryError(cwd);
       }
-      // Handle errors with stderr property (duck typing for ProcessExitError)
-      const stderr = (error as any).stderr;
-      if (
-        stderr &&
-        cwd &&
-        typeof stderr === 'string' &&
-        stderr.includes('There is no jj repo in')
-      ) {
-        throw new JjNotARepositoryError(cwd);
-      }
       throw error;
     }
   }
