@@ -1313,7 +1313,36 @@ Expected: exits 0 and lists the template's own default test file (e.g. `App.test
 Run: `pnpm test`
 Expected: PASS across both `core` and `macos` Jest projects.
 
-- [ ] **Step 11: Run lint and format across the whole tree**
+- [ ] **Step 11: Confirm `apps/macos` has TypeScript strict mode**
+
+Run: `cat apps/macos/tsconfig.json`
+Expected: `"extends": "@react-native/typescript-config"` (or a path resolving to it).
+
+Run: `cat apps/macos/node_modules/@react-native/typescript-config/tsconfig.json`
+Expected: `"strict": true` in its `compilerOptions`.
+
+If either check comes back different — `apps/macos/tsconfig.json` extends something else, or the base config doesn't set `strict: true` — add `"strict": true` explicitly to `apps/macos/tsconfig.json`'s own `compilerOptions` rather than assuming it's inherited. This satisfies the plan's Global Constraint that both packages use TypeScript strict mode — `packages/core` gets it from `tsconfig.base.json` (Task 1); this step is `apps/macos`'s equivalent check, since it extends React Native's own TypeScript config template instead of that same base file.
+
+- [ ] **Step 12: Replace the template's default `lint`/`test` scripts with this project's real tools**
+
+Task 9, Step 8 added a `"macos"` script to `apps/macos/package.json` but left the template's own defaults in place. Edit `apps/macos/package.json`'s `scripts` to:
+
+```json
+{
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "macos": "react-native run-macos",
+    "lint": "oxlint .",
+    "start": "react-native start",
+    "test": "jest"
+  }
+}
+```
+
+Only `"lint"` changes (from `"eslint ."`, which would fail — no `eslint` package is installed anywhere in this workspace) to `"oxlint ."`, matching this project's actual toolchain (Task 2). `"test": "jest"` is left as-is; it already does the right thing since Step 9 registered this package as a Jest project.
+
+- [ ] **Step 13: Run lint and format across the whole tree**
 
 Run: `pnpm lint`
 Expected: exits 0 (or only pre-existing template-generated warnings — fix any real errors before continuing).
@@ -1321,7 +1350,7 @@ Expected: exits 0 (or only pre-existing template-generated warnings — fix any 
 Run: `pnpm format`
 Expected: exits 0, reformats any files that need it.
 
-- [ ] **Step 12: Commit**
+- [ ] **Step 14: Commit**
 
 ```bash
 git add apps/macos jest.config.ts pnpm-lock.yaml
