@@ -27,6 +27,16 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
+      - name: Debug README.md discovery
+        run: |
+          echo "--- tracked README.md files ---"
+          git ls-files | grep -i readme || true
+          echo "--- all README.md on disk (excluding node_modules) ---"
+          find . -iname 'readme.md' -not -path '*/node_modules/*' || true
+          echo "--- all README.md on disk (including node_modules) ---"
+          find . -iname 'readme.md' || true
+          echo "--- oxfmt --list-different -v equivalent ---"
+          pnpm exec oxfmt --check apps/macos/README.md || true
       - run: pnpm format:check
       - run: pnpm --filter @jujutsushi/core run typecheck
       - run: pnpm --filter @jujutsushi/core run build
