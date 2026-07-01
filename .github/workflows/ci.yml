@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jj
+        run: |
+          curl -LsSf -o jj.tar.gz https://github.com/jj-vcs/jj/releases/download/v0.42.0/jj-v0.42.0-x86_64-unknown-linux-musl.tar.gz
+          tar xzf jj.tar.gz jj
+          sudo mv jj /usr/local/bin/jj
+          jj --version
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm --filter @jujutsushi/core run typecheck
+      - run: pnpm --filter @jujutsushi/core run build
+      - run: pnpm --filter @jujutsushi/core run test
+
+  macos-build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @jujutsushi/core run build
+
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode.app
+
+      - name: Install CocoaPods dependencies
+        working-directory: apps/macos
+        run: pod install --project-directory=macos
+
+      - name: Run apps/macos tests
+        working-directory: apps/macos
+        run: pnpm exec jest
+
+      - name: Build apps/macos
+        working-directory: apps/macos
+        run: npx react-native build-macos
