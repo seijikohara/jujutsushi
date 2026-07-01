@@ -96,6 +96,8 @@ Note for sub-project B: macOS 26 (Tahoe) introduced the "Liquid Glass" transluce
 
 This repository becomes the real `jj` repository the "proof of life" screen queries, via `jj git init --colocate`. This is additive: in colocated mode `jj` uses the existing `.git` history as its backend, so existing git history, branches, and remotes are unaffected, and the repository remains a fully functional plain-git repository for anyone not using `jj`.
 
+`jj` refuses to colocate inside a linked Git worktree ("Cannot create a colocated jj repo inside a Git worktree"), confirmed by direct testing during implementation planning. Colocation therefore runs once against the main checkout, not against any feature worktree. This was done directly against `main` during planning (2026-07-01): no commit was created (colocation only adds local `.jj/` metadata and a `.git/info/exclude` entry), so it carries none of the risk multi-commit feature work would.
+
 ### Testing strategy
 
 - `packages/core`: integration tests run against a real, temporary `jj` repository created with `jj git init` per test (not mocked subprocess output), so tests track actual `jj` behavior rather than an assumption about it.
