@@ -1,0 +1,33 @@
+glob_matcher:
+  doublestar # `**` matches 0+ directories. The default matcher requires `**` to
+  # cross at least 1 directory, which would silently skip a file sitting
+  # directly at e.g. packages/core/index.ts.
+
+pre-commit:
+  parallel: true # the two package groups touch disjoint files — safe to run concurrently
+  jobs:
+    - name: core
+      root: 'packages/core/'
+      glob: 'packages/core/**/*.{ts,tsx}'
+      group:
+        piped: true # oxlint, then oxfmt; stop if oxlint still fails after --fix
+        jobs:
+          - name: oxlint
+            run: pnpm exec oxlint --fix {staged_files}
+            stage_fixed: true
+          - name: oxfmt
+            run: pnpm exec oxfmt {staged_files}
+            stage_fixed: true
+
+    - name: macos
+      root: 'apps/macos/'
+      glob: 'apps/macos/**/*.{ts,tsx}'
+      group:
+        piped: true
+        jobs:
+          - name: oxlint
+            run: pnpm exec oxlint --fix {staged_files}
+            stage_fixed: true
+          - name: oxfmt
+            run: pnpm exec oxfmt {staged_files}
+            stage_fixed: true

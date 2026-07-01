@@ -1,0 +1,23 @@
+{
+  "name": "jujutsushi",
+  "private": true,
+  "scripts": {
+    "lint": "oxlint . --no-error-on-unmatched-pattern",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "jest",
+    "build:core": "pnpm --filter @jujutsushi/core run build"
+  },
+  "devDependencies": {
+    "jest": "30.4.2",
+    "lefthook": "2.1.9",
+    "oxfmt": "0.57.0",
+    "oxlint": "1.72.0",
+    "typescript": "6.0.3"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "pnpm@11.9.0"
+}
