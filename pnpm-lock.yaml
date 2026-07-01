@@ -111,6 +111,9 @@ importers:
       jest:
         specifier: 30.4.2
         version: 30.4.2(@types/node@26.0.1)
+      jest-environment-node:
+        specifier: 30.4.1
+        version: 30.4.1
       ts-jest:
         specifier: 29.4.11
         version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@26.0.1))(typescript@6.0.3)
