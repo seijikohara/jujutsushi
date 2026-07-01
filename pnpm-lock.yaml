@@ -20,9 +20,6 @@ importers:
       oxlint:
         specifier: 1.72.0
         version: 1.72.0
-      ts-jest:
-        specifier: 29.4.11
-        version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@26.0.1))(typescript@6.0.3)
       typescript:
         specifier: 6.0.3
         version: 6.0.3
