@@ -15,6 +15,7 @@
     "**/dist/**",
     "**/ios/**",
     "**/android/**",
-    "**/macos/Pods/**"
+    "**/macos/Pods/**",
+    "apps/macos/README.md"
   ]
 }
