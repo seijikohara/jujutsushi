@@ -2,7 +2,7 @@
   "name": "jujutsushi",
   "private": true,
   "scripts": {
-    "lint": "oxlint . || exit 0",
+    "lint": "oxlint . --no-error-on-unmatched-pattern",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "typecheck": "pnpm -r run typecheck",
