@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		31E70F38C665E86D5D7DCA08 /* JjProcessExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F9C7CB42753F5297FF6C65 /* JjProcessExecutor.swift */; };
 		4934E1E38CF96057D38506DA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9B0EEE008826581F21EE9D14 /* PrivacyInfo.xcprivacy */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
 		514201552437B4B40078DB4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 514201532437B4B40078DB4F /* Main.storyboard */; };
 		514201582437B4B40078DB4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 514201572437B4B40078DB4F /* main.m */; };
+		8746C82C4431EA382202E733 /* JjProcessExecutorBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 666CC90FDE6C45A2FB447E51 /* JjProcessExecutorBridge.m */; };
 		E099CF32F0828C588D375675 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9B0EEE008826581F21EE9D14 /* PrivacyInfo.xcprivacy */; };
 		E210912B2B128D954E28AB9D /* libPods-Jujutsushi-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1926CD7CE78CA7B9BF591504 /* libPods-Jujutsushi-macOS.a */; };
 /* End PBXBuildFile section */
@@ -27,8 +29,11 @@
 		514201562437B4B40078DB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* Jujutsushi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Jujutsushi.entitlements; sourceTree = "<group>"; };
+		666CC90FDE6C45A2FB447E51 /* JjProcessExecutorBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = JjProcessExecutorBridge.m; sourceTree = "<group>"; };
 		9B0EEE008826581F21EE9D14 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9F9F1DA372CCBFC31C252886 /* Pods-Jujutsushi-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jujutsushi-macOS.release.xcconfig"; path = "Target Support Files/Pods-Jujutsushi-macOS/Pods-Jujutsushi-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		A9F9C7CB42753F5297FF6C65 /* JjProcessExecutor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = JjProcessExecutor.swift; sourceTree = "<group>"; };
+		C103493F3FD5700478DDBF7E /* Jujutsushi-macOS-Bridging-Header.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Jujutsushi-macOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		C6775DAF4692C0BE62D45C04 /* Pods-Jujutsushi-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jujutsushi-macOS.debug.xcconfig"; path = "Target Support Files/Pods-Jujutsushi-macOS/Pods-Jujutsushi-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -62,6 +67,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		29585AA405C34EDC94DCBB9E /* NativeModules */ = {
+			isa = PBXGroup;
+			children = (
+				E8E2D0F43C50CF1CAF5ED7BD /* JjProcessExecutor */,
+			);
+			path = NativeModules;
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +94,8 @@
 				514201562437B4B40078DB4F /* Info.plist */,
 				514201572437B4B40078DB4F /* main.m */,
 				514201592437B4B40078DB4F /* Jujutsushi.entitlements */,
+				29585AA405C34EDC94DCBB9E /* NativeModules */,
+				C103493F3FD5700478DDBF7E /* Jujutsushi-macOS-Bridging-Header.h */,
 			);
 			path = "Jujutsushi-macOS";
 			sourceTree = "<group>";
@@ -114,6 +129,15 @@
 				514201492437B4B30078DB4F /* Jujutsushi.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E8E2D0F43C50CF1CAF5ED7BD /* JjProcessExecutor */ = {
+			isa = PBXGroup;
+			children = (
+				A9F9C7CB42753F5297FF6C65 /* JjProcessExecutor.swift */,
+				666CC90FDE6C45A2FB447E51 /* JjProcessExecutorBridge.m */,
+			);
+			path = JjProcessExecutor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -330,6 +354,8 @@
 			files = (
 				514201582437B4B40078DB4F /* main.m in Sources */,
 				5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */,
+				31E70F38C665E86D5D7DCA08 /* JjProcessExecutor.swift in Sources */,
+				8746C82C4431EA382202E733 /* JjProcessExecutorBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,6 +421,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Jujutsushi-macOS/Jujutsushi.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				INFOPLIST_FILE = "Jujutsushi-macos/Info.plist";
@@ -408,6 +435,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Jujutsushi;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Jujutsushi-macOS/Jujutsushi-macOS-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -419,6 +447,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Jujutsushi-macOS/Jujutsushi.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = "Jujutsushi-macos/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -431,6 +460,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Jujutsushi;
 				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "Jujutsushi-macOS/Jujutsushi-macOS-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
