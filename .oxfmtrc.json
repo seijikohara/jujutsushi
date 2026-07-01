@@ -10,5 +10,11 @@
   "insertFinalNewline": true,
   "arrowParens": "always",
   "bracketSpacing": true,
-  "ignorePatterns": ["**/dist/**", "**/ios/**", "**/android/**", "**/macos/Pods/**"]
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/ios/**",
+    "**/android/**",
+    "**/macos/Pods/**"
+  ]
 }
